@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon  --experimental-specifier-resolution=node server.js"
   },
   "repository": {
     "type": "git",
