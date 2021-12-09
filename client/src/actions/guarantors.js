@@ -28,3 +28,13 @@ export const updateGuarantor = (id, updatedGuarantor) => async (dispatch)=>{
     }
 
 }
+
+export const createGuarantor = (guarantor) => async (dispatch)=>{
+    try {
+        const data = await api.createGuarantor(guarantor);
+        dispatch({type: "CREATE", payload:data});
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
