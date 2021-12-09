@@ -6,6 +6,8 @@ export default (guarantors=[], action) => {
             return payload;
         case "CREATE":
             return guarantors;
+        case "DELETE":
+            return guarantors;
         default:
             return guarantors;
     };

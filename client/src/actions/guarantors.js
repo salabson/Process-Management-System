@@ -9,3 +9,22 @@ export const fetchGuarantors = () => async (dispatch) =>{
         console.log(error.message);
     }   
 }
+
+export const deleteGuarantor = (id) => async (dispatch) => {
+    try {
+        await api.deleteGuarantor(id);
+        dispatch({type: "DELETE", payload:id});
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+export const updateGuarantor = (id, updatedGuarantor) => async (dispatch)=>{
+    try {
+        await api.updateGuarantor(id, updatedGuarantor)
+        dispatch({type: "UPDATE", payload:id});
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
