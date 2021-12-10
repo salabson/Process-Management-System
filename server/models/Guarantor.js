@@ -28,6 +28,13 @@ module.exports = (sequelize, Datatypes) => {
 
     });
 
-    return Guarantor;
-
+    Guarantor.associate = (models) => {
+        Guarantor.hasMany(models.Guarantee, {
+            onDelete : "cascade",
+        });
 };
+
+return Guarantor;
+
+
+}
