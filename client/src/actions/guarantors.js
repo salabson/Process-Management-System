@@ -22,7 +22,7 @@ export const deleteGuarantor = (id) => async (dispatch) => {
 export const updateGuarantor = (id, updatedGuarantor) => async (dispatch)=>{
     try {
         await api.updateGuarantor(id, updatedGuarantor)
-        dispatch({type: "UPDATE", payload:id});
+        dispatch({type: "UPDATE", payload:updatedGuarantor});
     } catch (error) {
         console.log(error.message);
     }

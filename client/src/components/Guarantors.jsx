@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import { Table, Button, Modal, Input } from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import { fetchGuarantors, deleteGuarantor, updateGuarantor, createGuarantor } from "../actions/guarantors";
-import {EditOutlined, DeleteOutlined} from "@ant-design/icons";
+import {EditOutlined, DeleteOutlined, SearchOutlined, UserAddOutlined} from "@ant-design/icons";
 
 
 const Guarantors = () => {
@@ -12,6 +12,7 @@ const Guarantors = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isCreating, setIsCreating] = useState(null);
   const [editedGuarantor, setEditedGuarantor] = useState(null);
+  const [newdGuarantor, setNewdGuarantor] = useState(null);
   //const [newGuarantor, setGuarantor] = useState(null);
   const [id, setId]= useState("");
 
@@ -39,7 +40,54 @@ const columns = [
   {
     title : "Name",
     dataIndex : "Name",
-    key : "key"
+    filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => {
+      return (
+      <>
+      <Input 
+      autoFocus ={true} 
+      placeholder="Search by name"
+      value ={selectedKeys[0]}
+      onPressEnter = {() =>{
+        confirm();
+
+      }}
+      onBlur = {() => {
+        confirm();
+
+      }}
+      onChange = {(e) => {
+        
+        setSelectedKeys(e.target.value ? [e.target.value] : []);
+        confirm({closedDropdown:false});
+
+      }}
+      ></Input>
+      <Button 
+      type="primary" onClick={() => {
+        confirm();
+      }} > 
+      Search
+      </Button>
+
+      <Button 
+      type="danger" onClick={() => {
+        clearFilters();
+        confirm({closedDropdown:false})
+      }} > 
+      Clear
+      </Button>
+      </>
+      );
+    },
+
+   filterIcon: () => {
+     return <SearchOutlined/>
+   },
+
+   onFilter : (value, record) =>{
+    return record.Name.toLowerCase().includes(value.toLowerCase());
+
+  }
   }, 
 
   {
@@ -67,7 +115,7 @@ const columns = [
   {
     // Render edit and delete icons on the table
     title : "" ,
-    key : "edit",
+    key : "actions",
     render : (record) =>{
       return (
       <>
@@ -88,7 +136,9 @@ const columns = [
         setIsDeleting(true);
       }} 
       style={{color:"red", marginLeft:20}} 
+      alt="Delete guarantor"
       />
+      <UserAddOutlined alt="View guarantees" style={{marginLeft:20}}/>
       </>
       );
 
@@ -120,8 +170,9 @@ const editGuarantor = (id, updatedGuarantor) => {
  This function call create action of redux
  */
 const createNewGuarantor = (updatedGuarantor) => {
-  setEditedGuarantor({...updatedGuarantor})
-  dispatch(createGuarantor(updatedGuarantor));
+
+  setEditedGuarantor({...newdGuarantor})
+  dispatch(createGuarantor(newdGuarantor));
 }
 
     return (
@@ -129,6 +180,7 @@ const createNewGuarantor = (updatedGuarantor) => {
         <Button
          onClick = {() => {
            setIsCreating(true);
+           setNewdGuarantor("");
          }}
         >
           Add new guarantor
@@ -137,7 +189,9 @@ const createNewGuarantor = (updatedGuarantor) => {
         <Table 
         dataSource={guarantors}
         columns={columns}
+        style={{display:"flex", flex:1}}
         >
+        
         </Table>
 
         {/* Modal window for editing guarantor data */}
@@ -172,23 +226,7 @@ const createNewGuarantor = (updatedGuarantor) => {
          
         </Modal>
 
-        {/*  Modal window for deleting guarator */}
-        <Modal
-           title  = "Are you sure you want to delete this guarantor record"
-           visible = {isDeleting}
-           okText = "Yes"
-           okType = "danger"
-           onOk   =  {()=> {
-            /* Delete guarantor and close modal window  */
-             removeGuarantor(id);
-             setIsDeleting(false);
-           }}
-           onCancel = {() => {
-            //  Close Modal window
-             setIsDeleting(false);
-           }}
-        >
-       </Modal>
+       
 
        {/* Modal Window for creating guarantor */}
        <Modal
@@ -201,25 +239,24 @@ const createNewGuarantor = (updatedGuarantor) => {
            onOk = {() => {
             createNewGuarantor(editedGuarantor); 
             setIsCreating(false);
-            setEditedGuarantor("");
            }}
         >
          
          <Input  onChange={(e)=>{
-           setEditedGuarantor({...editedGuarantor, Name: e.target.value})
-         }} placeholder="Enter gurantor's name"></Input>
+           setNewdGuarantor({...newdGuarantor, Name: e.target.value})
+         }} placeholder="Enter gurantor's name" value={newdGuarantor?.Name}></Input>
          <Input  onChange={(e)=>{
-           setEditedGuarantor({...editedGuarantor, AccountNo: e.target.value})
-         }} placeholder="Enter gurantor's account number"></Input>
+           setNewdGuarantor({...newdGuarantor, AccountNo: e.target.value})
+         }} placeholder="Enter gurantor's account number" value={newdGuarantor?.AccountNo}></Input>
          <Input  onChange={(e)=>{
-           setEditedGuarantor({...editedGuarantor, Address: e.target.value})
-         }} placeholder="Enter gurantor's phone number"></Input>
+           setNewdGuarantor({...newdGuarantor, Address: e.target.value})
+         }} placeholder="Enter gurantor's address" value={newdGuarantor?.Address}></Input>
         <Input  onChange={(e)=>{
-           setEditedGuarantor({...editedGuarantor, PhoneNo: e.target.value})
-         }} placeholder="Enter gurantor's address"></Input>
+           setNewdGuarantor({...newdGuarantor, PhoneNo: e.target.value})
+         }} placeholder="Enter gurantor's phone number" value={newdGuarantor?.PhoneNo}></Input>
          <Input  onChange={(e)=>{
-           setEditedGuarantor({...editedGuarantor, Salary: e.target.value})
-         }} placeholder="Enter gurantor's salary"></Input>
+           setNewdGuarantor({...newdGuarantor, Salary: e.target.value})
+         }} placeholder="Enter gurantor's salary" value={newdGuarantor?.Salary}></Input>
         </Modal>
 
         {/*  Modal window for deleting guarator */}

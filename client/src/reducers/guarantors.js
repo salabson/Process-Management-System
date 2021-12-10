@@ -5,7 +5,7 @@ export default (guarantors=[], action) => {
         case "FETCH_ALL": 
             return payload;
         case "CREATE":
-            return guarantors;
+            return [...guarantors, payload];
         case "DELETE":
             return guarantors;
         default:
