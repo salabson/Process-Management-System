@@ -13,7 +13,7 @@ const Guarantors = () => {
   const [isCreating, setIsCreating] = useState(null);
   const [editedGuarantor, setEditedGuarantor] = useState(null);
   const [newdGuarantor, setNewdGuarantor] = useState(null);
-  //const [newGuarantor, setGuarantor] = useState(null);
+  const [accountNoInput, setAccountNoInput] = useState("");
   const [id, setId]= useState("");
 
 
@@ -179,6 +179,7 @@ const createNewGuarantor = (updatedGuarantor) => {
       <>
         <Button
          onClick = {() => {
+           
            setIsCreating(true);
            setNewdGuarantor("");
          }}
@@ -237,8 +238,20 @@ const createNewGuarantor = (updatedGuarantor) => {
             setIsCreating(false);
            }}
            onOk = {() => {
-            createNewGuarantor(editedGuarantor); 
-            setIsCreating(false);
+            //const filteredData = cryptoList?.data?.coins.filter((coin)=>coin.name.toLowerCase().includes(searchTerm.toLowerCase()));
+           const filteredData = guarantors.filter((guarantor) => guarantor.AccountNo === accountNoInput)
+           console.log(filteredData);
+             if (filteredData.length > 0) {
+               Modal.confirm({
+                title: "This guarantor already exist",
+                cancelButtonProps: {style:{display:"none"}}
+      
+               })
+             } else {
+              createNewGuarantor(newdGuarantor); 
+              setIsCreating(false);
+             }
+           
            }}
         >
          
@@ -247,7 +260,9 @@ const createNewGuarantor = (updatedGuarantor) => {
          }} placeholder="Enter gurantor's name" value={newdGuarantor?.Name}></Input>
          <Input  onChange={(e)=>{
            setNewdGuarantor({...newdGuarantor, AccountNo: e.target.value})
-         }} placeholder="Enter gurantor's account number" value={newdGuarantor?.AccountNo}></Input>
+         }} 
+         placeholder="Enter gurantor's account number" 
+         value={newdGuarantor?.AccountNo} onInput={e => setAccountNoInput(e.target.value)}></Input>
          <Input  onChange={(e)=>{
            setNewdGuarantor({...newdGuarantor, Address: e.target.value})
          }} placeholder="Enter gurantor's address" value={newdGuarantor?.Address}></Input>
