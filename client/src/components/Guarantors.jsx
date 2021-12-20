@@ -1,18 +1,23 @@
 import React, {useEffect, useState} from 'react';
 import "antd/dist/antd.css";
-import { Table, Button, Modal, Input } from "antd";
+import { Table, Button, Modal, Input, DatePicker } from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import { fetchGuarantors, deleteGuarantor, updateGuarantor, createGuarantor } from "../actions/guarantors";
-import {EditOutlined, DeleteOutlined, SearchOutlined, UserAddOutlined} from "@ant-design/icons";
-
+import {createGuarantee} from "../actions/guarantee";
+import {EditOutlined, DeleteOutlined, SearchOutlined, UserAddOutlined, UserSwitchOutlined} from "@ant-design/icons";
+import moment from "moment";
+import Guarantees from './Guarantees';
 
 const Guarantors = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isCreating, setIsCreating] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [isCreatingGuarantee, setIsCreatingGuarantee] = useState(false);
+  const [isDislplayingGuarantee, setIsDisplayingGuarantee] = useState(false);
   const [editedGuarantor, setEditedGuarantor] = useState(null);
   const [newdGuarantor, setNewdGuarantor] = useState(null);
+  const [newGuarantee, setNewGuarantee] = useState(null);
   const [accountNoInput, setAccountNoInput] = useState("");
   const [id, setId]= useState("");
 
@@ -23,12 +28,16 @@ const Guarantors = () => {
   // Retrieve guarantor data when webpage loaded or guarantor list changes
   const [guarantors, setGuarantors] = useState([]);
   const guarantorList = useSelector((state) => state.guarantors);
+  
+
+ 
+  
+
   useEffect(() => {
     dispatch(fetchGuarantors());
     setGuarantors(guarantorList);
   }, [dispatch, guarantorList]);
 
-  
   
 // Define column headings of the antd table
 const columns = [
@@ -138,7 +147,15 @@ const columns = [
       style={{color:"red", marginLeft:20}} 
       alt="Delete guarantor"
       />
-      <UserAddOutlined alt="View guarantees" style={{marginLeft:20}}/>
+      <UserAddOutlined  style={{marginLeft:20}} onClick={() => {
+        setNewGuarantee({...newGuarantee, GuarantorId:record.id})
+        setIsCreatingGuarantee(true);
+      }}/>
+
+      <UserSwitchOutlined onClick={() => {
+        setId(record.id);
+        setIsDisplayingGuarantee(true);
+      }}/>
       </>
       );
 
@@ -170,10 +187,18 @@ const editGuarantor = (id, updatedGuarantor) => {
  This function call create action of redux
  */
 const createNewGuarantor = (updatedGuarantor) => {
-
+  //e.preventDefault();
   setEditedGuarantor({...newdGuarantor})
   dispatch(createGuarantor(newdGuarantor));
 }
+
+const createNewGuarantee = (newdGuarantee) => {
+  //e.preventDefault();
+  setNewGuarantee({...newdGuarantee});
+  dispatch(createGuarantee(newdGuarantee));
+  console.log(newGuarantee);
+}
+
 
     return (
       <>
@@ -194,6 +219,7 @@ const createNewGuarantor = (updatedGuarantor) => {
         >
         
         </Table>
+       
 
         {/* Modal window for editing guarantor data */}
         <Modal
@@ -291,6 +317,75 @@ const createNewGuarantor = (updatedGuarantor) => {
            }}
         >
        </Modal>
+       {/*  Modal window for creating guarantee */}
+       <Modal
+           title  = "Create Guarantee"
+           visible = {isCreatingGuarantee}
+           okText = "Save"
+           okType = "primary"
+           onOk   =  {()=> {
+            /* Create guarantee and close modal window  */
+            createNewGuarantee(newGuarantee);
+             setIsCreatingGuarantee(false);
+           }}
+           onCancel = {() => {
+            //  Close Modal window
+            setIsCreatingGuarantee(false);
+           }}
+        >
+
+
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, Name: e.target.value})
+}} placeholder="Enter gurantor's name" value={newGuarantee?.Name}></Input>
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, AccountNo: e.target.value})
+}} 
+placeholder="Enter gurantor's account number" 
+value={newGuarantee?.AccountNo} onInput={e => setAccountNoInput(e.target.value)}></Input>
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, PhoneNo: e.target.value})
+}} placeholder="Enter gurantor's phone number" value={newGuarantee?.PhoneNo}></Input>
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, Address: e.target.value})
+}} placeholder="Enter gurantor's address" value={newGuarantee?.Address}></Input>
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, LoanAmount: e.target.value})
+}} placeholder="Enter loan  amount here" value={newGuarantee?.LoanAmount}></Input>
+<Input  onChange={(e)=>{
+  setNewGuarantee({...newGuarantee, Repayment: e.target.value})
+}} placeholder="Enter loan  amount here" value={newGuarantee?.Repayment}></Input>
+<DatePicker format={"YYYY-MM-DD"}   onChange={(date)=>{
+ const formattedDate =  moment(date.toDate(),"YYYY-MM-DD")
+  setNewGuarantee({...newGuarantee, StartDate:formattedDate})
+}} placeholder="Enter start  date here" value={newGuarantee?.StartDate}></DatePicker>
+
+<DatePicker format={"YYYY-MM-DD"}  onChange={(date )=>{
+ const formattedDate =  moment(date.toDate(),"YYYY-MM-DD")
+  setNewGuarantee({...newGuarantee, EndDate:formattedDate})
+}} placeholder="Enter end  date here" value={newGuarantee?.EndDate}></DatePicker>     
+          
+</Modal>
+
+ {/*  Modal window for deleting guarator */}
+ <Modal
+           title  = "Guarantee(s) Information"
+           visible = {isDislplayingGuarantee}
+           okText = "Yes"
+           okType = "danger"
+           onOk   =  {()=> {
+            /* Delete guarantor and close modal window  */
+             setIsDisplayingGuarantee(false);
+           }}
+           onCancel = {() => {
+            //  Close Modal window
+            setIsDisplayingGuarantee(false);
+           }}
+        >
+          {id}
+          <Guarantees guarantorId={id} />
+       </Modal>
+
       </>
         
     );

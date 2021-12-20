@@ -4,7 +4,7 @@ export const fetchGuarantors = () => async (dispatch) =>{
 
     try {
         const {data} = await api.fetchGuarantors();
-        dispatch({type:"FETCH_ALL", payload:data});
+        dispatch({type:"FETCH_ALL_GUARANTORS", payload:data});
     } catch (error) {
         console.log(error.message);
     }   
